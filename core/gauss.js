@@ -134,7 +134,6 @@ var Gauss = Algorithm.extend({
 
     return iterator;
   },
-  
   isValidMatrix: function() {
 	var firstDiagonal = 1;
 	var secondDiagonal = 1;
