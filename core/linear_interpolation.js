@@ -6,6 +6,7 @@ var LinearInterpolation = Algorithm.extend({
     this.machineName = 'linear-interpolation';
     this.name = 'Linear interpolation';
     this.result = null;
+  	this.pointName = this.machineName + '-point';
     // parent init method
     this._super();
   },
@@ -39,7 +40,97 @@ var LinearInterpolation = Algorithm.extend({
     }
 
     this.result = values;
-    
+    var interval = this.findInterval();
+    if (interval === false) {
+      alert('Point is out of range!');
+      return;
+    }
+
+    if (!_.isArray(interval)) {
+      this.viewResult(this.result[0][interval], this.result[1][interval]);
+    }
+
+    var k = this.result[1][ interval[1] ] - this.result[1][ interval[0] ];
+    k /= this.result[0][ interval[1] ] - this.result[0][ interval[0] ];
+    var l = this.result[1][ interval[1] ] - k * this.result[0][ interval[1] ];
+
+    var f = this.fixFloat( (k * this.point + l), 2 )[0];
+    this.viewResult(this.point, f, interval[1]);
+    this.result = values;
+  },
+  /**
+   * Find neighbors
+   *
+   * @return {Array.<Integer>|Boolean|Integer}
+   */
+  findInterval: function() {
+    this.point = this.getFieldValue(this.pointName);
+    var index = _.indexOf(this.result[0], this.point);
+
+    if (index != -1) {
+      return index;
+    }
+
+    // Find right edge
+    var rightEdge = _.sortBy(this.result[0], function(num) {
+      return num < this;
+    }, this.point)[0];
+
+    // Check if found edge is valid
+    if (this.point > rightEdge || rightEdge === this.result[0][0]) {
+      return false;
+    }
+
+    // Get edge index
+    rightEdge = _.indexOf(this.result[0], rightEdge);
+    var leftEdge = rightEdge - 1;
+
+    return [leftEdge, rightEdge];
+  },
+  viewResult: function(x, f, position) {
+    if (position) {
+      this.result[0].splice(position, 0, x);
+      this.result[1].splice(position, 0, f);
+    }
+
+    this.result.toString = function() {
+      var result = '';
+      result += this[0].join(' | ') + '\n';
+      result += this[1].join(' | ');
+
+      return result;
+    };
+	
+	  alert(this.result);
+  },
+  fillForm: function(formName) {
+    var form = this._super(formName);
+
+    if (formName == this.machineName) {
+      this.addPointToForm(form);
+    }
+
+    return form;
+  },
+  addPointToForm: function(form) {
+    // create field
+    elem = document.createElement('input');
+    elem.setAttribute('type', 'text');
+    elem.setAttribute('name', this.pointName);
+    elem.setAttribute('id', this.pointName);
+    elem.setAttribute('size', 4);
+
+    form.insertBefore(elem, form.children[form.children.length - 1]);
+
+    // create label
+    var elem = document.createElement('label');
+    elem.setAttribute('for', this.pointName);
+    elem.innerHTML = 'Point';
+
+    form.insertBefore(elem, form.children[form.children.length - 2]);
+
+    elem = document.createElement('br');
+    form.insertBefore(elem, form.children[form.children.length - 1]);
   },
   toConsole: function(result) {
     if (result) {
@@ -53,4 +144,4 @@ var LinearInterpolation = Algorithm.extend({
   }
 });
 
-var gauss = new LinearInterpolation();
+var interpolation = new LinearInterpolation();

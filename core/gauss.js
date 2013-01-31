@@ -39,6 +39,12 @@ var Gauss = Algorithm.extend({
     }
 
     this.result = values;
+	
+	if (!this.isValidMatrix()) {
+	  alert('No results');
+	  return;
+	}
+	
     // Applying an algo to each row
     for (var i = 0; i < this.rowCount; i++) {
       i = this.performRow(i);
@@ -127,6 +133,23 @@ var Gauss = Algorithm.extend({
     });
 
     return iterator;
+  },
+  
+  isValidMatrix: function() {
+	var firstDiagonal = 1;
+	var secondDiagonal = 1;
+	for (var i = 0; i < 3; i++) {
+	  firstDiagonal *= this.result[i][i];
+	}
+	
+	firstDiagonal += this.result[0][1] + this.result[1][2] + this.result[2][0];
+	firstDiagonal += this.result[1][0] + this.result[2][1] + this.result[0][2];
+	
+	secondDiagonal *= this.result[0][2] * this.result[1][1] * this.result[2][0];
+	secondDiagonal += this.result[0][1] + this.result[1][0] + this.result[2][2];
+	secondDiagonal += this.result[1][2] + this.result[2][1] + this.result[0][0];
+	
+	return (firstDiagonal - secondDiagonal) !== 0;
   },
   /**
    * Сalculation of the results
