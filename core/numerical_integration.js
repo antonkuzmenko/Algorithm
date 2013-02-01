@@ -135,6 +135,7 @@ var Numerical = Algorithm.extend({
     this.right.sum = 0;
     this.right.result = 0;
     this.trapeze.sum = 0;
+    this.trapeze.result = 0;
     this.simpson.sum = 0;
     this.simpson.result = 0;
 
