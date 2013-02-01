@@ -16,6 +16,10 @@ var Numerical = Algorithm.extend({
     this.right = {name: 'правых прямоугольников'};
     this.trapeze = {name: 'трапеций'};
     this.simpson = {name: 'Симпсона'};
+    this.list = [
+      'left', 'right', 'middle',
+      'trapeze', 'simpson'
+    ];
       // parent init method
     this._super();
   },
@@ -128,16 +132,10 @@ var Numerical = Algorithm.extend({
     this.N = this.getFieldValue(this.machineName + '-N');
     this.H = this.fixFloat((this.B - this.A) / this.N, 4)[0];
 
-    this.left.sum = 0;
-    this.left.result = 0;
-    this.middle.sum = 0;
-    this.middle.result = 0;
-    this.right.sum = 0;
-    this.right.result = 0;
-    this.trapeze.sum = 0;
-    this.trapeze.result = 0;
-    this.simpson.sum = 0;
-    this.simpson.result = 0;
+    _.each(this.list, function(varName) {
+      this[varName].sum = 0;
+      this[varName].result = 0;
+    }, this);
 
     this.integrate();
 
@@ -256,14 +254,9 @@ var Numerical = Algorithm.extend({
     var str = '<tr><th>Название</th><th>Результат</th>';
     str += '<th>Абсолютная погрешность</th><th>Относительная погрешность</th></tr>';
 
-    var list = [
-       'left', 'right', 'middle',
-       'trapeze', 'simpson'
-    ];
-
     var current = null;
-    for (var i = 0; i < list.length; i++) {
-      current = list[i];
+    for (var i = 0; i < this.list.length; i++) {
+      current = this.list[i];
       str += '<tr><td>Формулы ' + this[current].name + '</td>';
       str += '<td>' + this.fixFloat(this[current].result, 4) + '</td>';
       str += '<td>' + this.fixFloat(this[current].absError, 4) + '</td>';
