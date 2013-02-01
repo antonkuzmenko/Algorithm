@@ -5,7 +5,7 @@ var LinearInterpolation = Algorithm.extend({
   init: function() {
     this.machineName = 'linear-interpolation';
     this.name = 'Linear interpolation';
-    this.result = null;
+    this.values = null;
   	this.pointName = this.machineName + '-point';
     // parent init method
     this._super();
@@ -39,7 +39,7 @@ var LinearInterpolation = Algorithm.extend({
       return;
     }
 
-    this.result = values;
+    this.values = values;
     var interval = this.findInterval();
     if (interval === false) {
       alert('Point is out of range!');
@@ -47,16 +47,16 @@ var LinearInterpolation = Algorithm.extend({
     }
 
     if (!_.isArray(interval)) {
-      this.viewResult(this.result[0][interval], this.result[1][interval]);
+      this.viewResult(this.values[0][interval], this.values[1][interval]);
     }
 
-    var k = this.result[1][ interval[1] ] - this.result[1][ interval[0] ];
-    k /= this.result[0][ interval[1] ] - this.result[0][ interval[0] ];
-    var l = this.result[1][ interval[1] ] - k * this.result[0][ interval[1] ];
+    var k = this.values[1][ interval[1] ] - this.values[1][ interval[0] ];
+    k /= this.values[0][ interval[1] ] - this.values[0][ interval[0] ];
+    var l = this.values[1][ interval[1] ] - k * this.values[0][ interval[1] ];
 
     var f = this.fixFloat( (k * this.point + l), 2 )[0];
     this.viewResult(this.point, f, interval[1]);
-    this.result = values;
+    this.values = values;
   },
   /**
    * Find neighbors
@@ -65,35 +65,35 @@ var LinearInterpolation = Algorithm.extend({
    */
   findInterval: function() {
     this.point = this.getFieldValue(this.pointName);
-    var index = _.indexOf(this.result[0], this.point);
+    var index = _.indexOf(this.values[0], this.point);
 
     if (index != -1) {
       return index;
     }
 
     // Find right edge
-    var rightEdge = _.sortBy(this.result[0], function(num) {
+    var rightEdge = _.sortBy(this.values[0], function(num) {
       return num < this;
     }, this.point)[0];
 
     // Check if found edge is valid
-    if (this.point > rightEdge || rightEdge === this.result[0][0]) {
+    if (this.point > rightEdge || rightEdge === this.values[0][0]) {
       return false;
     }
 
     // Get edge index
-    rightEdge = _.indexOf(this.result[0], rightEdge);
+    rightEdge = _.indexOf(this.values[0], rightEdge);
     var leftEdge = rightEdge - 1;
 
     return [leftEdge, rightEdge];
   },
   viewResult: function(x, f, position) {
     if (position) {
-      this.result[0].splice(position, 0, x);
-      this.result[1].splice(position, 0, f);
+      this.values[0].splice(position, 0, x);
+      this.values[1].splice(position, 0, f);
     }
 
-    this.result.toString = function() {
+    this.values.toString = function() {
       var result = '';
       result += this[0].join(' | ') + '\n';
       result += this[1].join(' | ');
@@ -101,7 +101,7 @@ var LinearInterpolation = Algorithm.extend({
       return result;
     };
 	
-	  alert(this.result);
+	  alert(this.values);
   },
   fillForm: function(formName) {
     var form = this._super(formName);
@@ -138,7 +138,7 @@ var LinearInterpolation = Algorithm.extend({
       return this;
     }
 
-    console.log(this.result);
+    console.log(this.values);
 
     return this;
   }

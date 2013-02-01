@@ -5,7 +5,7 @@ var Gauss = Algorithm.extend({
   init: function() {
     this.machineName = 'gauss';
     this.name = 'Gaussian elimination';
-    this.result = null;
+    this.values = null;
     // parent init method
     this._super();
   },
@@ -38,7 +38,7 @@ var Gauss = Algorithm.extend({
       return;
     }
 
-    this.result = values;
+    this.values = values;
 	
 	if (!this.isValidMatrix()) {
 	  alert('No results');
@@ -76,7 +76,7 @@ var Gauss = Algorithm.extend({
     var tempRow = [];
     var multiplier = 0;
     var divider = 0;
-    var currentRow = this.result[iterator];
+    var currentRow = this.values[iterator];
 
     // Transform to "0"
     for (; i < iterator; i++) {
@@ -85,7 +85,7 @@ var Gauss = Algorithm.extend({
       }
 
       tempRow = [];
-      tempRow.push.apply(tempRow, this.result[i]);
+      tempRow.push.apply(tempRow, this.values[i]);
       multiplier = currentRow[i];
       tempRow = _.map(tempRow, function(value) {
         return value * multiplier;
@@ -106,7 +106,7 @@ var Gauss = Algorithm.extend({
     // 5 -1  3
     if (currentRow[iterator] === 0) {
       // Find suitable row to flip with
-      var foundRow = _.find(this.result, function(arr) {
+      var foundRow = _.find(this.values, function(arr) {
         return (arr[iterator] !== 0);
       });
 
@@ -118,9 +118,9 @@ var Gauss = Algorithm.extend({
 
       // Swap with found
       var flip = [];
-      flip.push.apply(tempRow, this.result[iterator]);
-      var flap = this.result.splice(foundRow, 1, flip);
-      this.result.splice(iterator, 0, flap);
+      flip.push.apply(tempRow, this.values[iterator]);
+      var flap = this.values.splice(foundRow, 1, flip);
+      this.values.splice(iterator, 0, flap);
 
       // Sets iterator to previous to perform current row again
       return iterator - 1;
@@ -128,7 +128,7 @@ var Gauss = Algorithm.extend({
 
     // Transform to "1"
     divider = currentRow[iterator];
-    this.result[iterator] = _.map(currentRow, function(value) {
+    this.values[iterator] = _.map(currentRow, function(value) {
       return value / divider;
     });
 
@@ -138,15 +138,15 @@ var Gauss = Algorithm.extend({
 	var firstDiagonal = 1;
 	var secondDiagonal = 1;
 	for (var i = 0; i < 3; i++) {
-	  firstDiagonal *= this.result[i][i];
+	  firstDiagonal *= this.values[i][i];
 	}
 	
-	firstDiagonal += this.result[0][1] + this.result[1][2] + this.result[2][0];
-	firstDiagonal += this.result[1][0] + this.result[2][1] + this.result[0][2];
+	firstDiagonal += this.values[0][1] + this.values[1][2] + this.values[2][0];
+	firstDiagonal += this.values[1][0] + this.values[2][1] + this.values[0][2];
 	
-	secondDiagonal *= this.result[0][2] * this.result[1][1] * this.result[2][0];
-	secondDiagonal += this.result[0][1] + this.result[1][0] + this.result[2][2];
-	secondDiagonal += this.result[1][2] + this.result[2][1] + this.result[0][0];
+	secondDiagonal *= this.values[0][2] * this.values[1][1] * this.values[2][0];
+	secondDiagonal += this.values[0][1] + this.values[1][0] + this.values[2][2];
+	secondDiagonal += this.values[1][2] + this.values[2][1] + this.values[0][0];
 	
 	return (firstDiagonal - secondDiagonal) !== 0;
   },
@@ -157,13 +157,13 @@ var Gauss = Algorithm.extend({
    */
   getResult: function() {
     var result = [];
-    result.push( _.last( this.result )[this.rowCount] );
+    result.push( _.last( this.values )[this.rowCount] );
 
-    var i = this.result.length - 1;
+    var i = this.values.length - 1;
     while (i--) {
-      var val = this.result[i][this.rowCount];
+      var val = this.values[i][this.rowCount];
       for (var j = i + 1; j < this.rowCount; j++) {
-        val -= this.result[i][j] * result[this.rowCount - 1 - j];
+        val -= this.values[i][j] * result[this.rowCount - 1 - j];
       }
       result.push(val);
     }
@@ -176,7 +176,7 @@ var Gauss = Algorithm.extend({
       return this;
     }
 
-    console.log(this.result);
+    console.log(this.values);
 
     return this;
   }
